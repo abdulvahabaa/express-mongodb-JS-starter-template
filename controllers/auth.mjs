@@ -1,65 +1,69 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-// import pool from "../connection/db.mjs";
+import collecion from "../connection/collecion.mjs";
+import connectToDatabase from "../connection/db.mjs";
 import { v7 as uuidv7 } from "uuid";
 
 export const signup = async (req, res) => {
-  console.log("request startHeare>>>",req)
-  // try {
-  //   const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
+    const db = await connectToDatabase("PERSONAL");
 
-  //   // Generate salt and hash the password
-  //   const salt = await bcrypt.genSalt();
-  //   const passwordHash = await bcrypt.hash(password, salt);
-  //   const userid = uuidv7();
+    const user = await db
+      .collection(collecion.USER_COLLECTIION)
+      .findOne({ email });
 
-  //   // Insert the new user into the database
-  //   const result = await pool.query(
-  //     "INSERT INTO public.users (name, email, password, userid) VALUES ($1, $2, $3, $4) RETURNING *",
-  //     [name, email, passwordHash, userid]
-  //   );
+    if (user) {
+      return res.status(400).json({ message: "User alredy exist." });
+    }
 
-  //   // Return the inserted user data
-  //   res.status(201).json(result.rows[0]);
-  // } catch (err) {
-  //   console.error(err.message);
-  //   res.status(500).json({ error: err.message });
-  // }
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+    const userId = uuidv7();
+
+    const result = await db.collection(collecion.USER_COLLECTIION).insertOne({
+      userId,
+      name,
+      email,
+      password: passwordHash,
+      isActive: true,
+      cratedAt: Date.now(),
+    });
+
+    res.status(201).json({ message: "User created successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 export const login = async (req, res) => {
-  // try {
-  //   const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  //   // Query the user by email
-  //   const result = await pool.query(
-  //     "SELECT * FROM public.users WHERE email = $1",
-  //     [email]
-  //   );
-  //   let user = result.rows[0];
+    const db = await connectToDatabase("PERSONAL");
+    const user = await db
+      .collection(collecion.USER_COLLECTIION)
+      .findOne({ email });
 
-  //   if (!user) {
-  //     return res.status(400).json({ msg: "User does not exist." });
-  //   }
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist." });
+    }
 
-  //   // Compare the provided password with the stored hashed password
-  //   const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials." });
+    }
 
-  //   if (!isMatch) {
-  //     return res.status(400).json({ msg: "Invalid Credentials..." });
-  //   }
+    const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET, {
+      expiresIn: "2h", // Token expiration time
+    });
 
-  //   // Create a JWT token
-  //   const token = jwt.sign({ id: user.userid }, process.env.JWT_SECRET, {
-  //     expiresIn: "3h", // Set the expiry time for 3 hours
-  //   });
+    const { password: _, ...userWithoutPassword } = user;
 
-  //   // Remove the password field from the user object before returning it
-  //   delete user.password;
-
-  //   res.status(200).json({ token, user });
-  // } catch (err) {
-  //   console.error(err);
-  //   res.status(500).json({ error: "Internal server error" });
-  // }
+    res.status(200).json({ token, user: userWithoutPassword });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
