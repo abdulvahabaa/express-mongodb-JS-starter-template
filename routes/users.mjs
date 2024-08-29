@@ -1,5 +1,4 @@
 import express from "express";
-import pool from "../connection/db.mjs";
 import { verifyToken } from "../middleware/verifyToken.mjs";
 import { getUser } from "../controllers/userData.mjs";
 
