@@ -1,27 +1,38 @@
 import { Db, MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
+
 dotenv.config();
-const MONGODB_URI = `${process.env.MONGO_DB_URI}`;
+
+const MONGODB_URI = process.env.MONGO_DB_URI;
 let client;
 
-const connectToDatabase = async () => {
-  if (client != null) {
-    console.log("\n\n", "Process ID", process.pid, "Using Cached Connection");
-    return client.db();
+const connectToDatabase = async (databaseName) => {
+  if (client) {
+    console.log("\nProcess ID:", process.pid, "- Using Cached Connection\n");
+    return client.db(databaseName);
   }
-  console.log(
-    "Process ID",
-    process.pid,
-    "Using New Connection",
-    new Date(),
-    "\n"
-  );
-  client = await MongoClient.connect(MONGODB_URI, {
-    compressors: "zstd",
-    maxPoolSize: 6,
-  });
 
-  return client.db();
+  try {
+    console.log(
+      "\nProcess ID:",
+      process.pid,
+      "- Establishing New Connection -",
+      new Date().toISOString(),
+      "\n"
+    );
+
+    client = await MongoClient.connect(MONGODB_URI, {
+      // compressors: ["zstd"],
+      maxPoolSize: 6,
+    });
+
+    console.log("Connection to MongoDB established successfully");
+
+    return client.db(databaseName);
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    throw error;
+  }
 };
 
 export default connectToDatabase;
