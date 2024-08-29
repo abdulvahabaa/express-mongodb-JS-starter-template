@@ -1,2 +1,2 @@
-# express-monogdb-starter-termplate
-This repository is using to create express mongodb backend starter template for my projects
+# express-mongodb-JS-starter-template
+This repository is used to create an Express MongoDB backend starter template for my projects.
