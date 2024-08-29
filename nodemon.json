@@ -1,5 +1,0 @@
-{
-    "verbose":true,
-    "ext": "js,cjs,mjs,json,njk,ts",
-    "ignore": ["dist"] 
-}
