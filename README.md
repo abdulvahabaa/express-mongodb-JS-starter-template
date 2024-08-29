@@ -16,6 +16,7 @@
     - [API Endpoints](#api-endpoints)
       - [User Authentication and Profile Management](#user-authentication-and-profile-management)
     - [Database Schama](#database-schama)
+      - [uers collection](#uers-collection)
 
 ## Features
 
@@ -92,14 +93,17 @@ Refer to the following sections for detailed information on each API endpoint.
 
 ### Database Schama
 
-```
-CREATE TABLE IF NOT EXISTS public.users
-(
-   id serial PRIMARY KEY,
-   name character varying(255) NOT NULL,
-   email character varying(255) NOT NULL UNIQUE,
-   password character varying(255) NOT NULL,
-   userid character varying(255) NOT NULL UNIQUE,
-   created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
-);
+#### uers collection
+Here is the MongoDB `users` collection schema formatted as a markdown table:
+
+```markdown
+| Field      | Type    | Description            |
+|------------|---------|------------------------|
+| `_id`      | ObjectId| Unique identifier      |
+| `userId`   | String  | User identifier        |
+| `name`     | String  | User's name            |
+| `email`    | String  | User's email           |
+| `password` | String  | User's password        |
+| `isActive` | Boolean | Account active status  |
+| `createdAt`| Double  | Timestamp of creation  |
 ```

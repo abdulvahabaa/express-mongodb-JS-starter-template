@@ -8,7 +8,7 @@ import { loginSchema, signupSchema } from "../schema/authSchema.mjs";
 
 export const signup = async (req, res) => {
   try {
-    // Validate the request body against the signup schema
+
     const { name, email, password } = signupSchema.parse(req.body);
 
     const db = await connectToDatabase("PERSONAL");
@@ -45,7 +45,7 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    // Validate the request body against the login schema
+ 
     const { email, password } = loginSchema.parse(req.body);
 
     const db = await connectToDatabase("PERSONAL");
