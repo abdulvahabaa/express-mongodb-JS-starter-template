@@ -94,7 +94,6 @@ Refer to the following sections for detailed information on each API endpoint.
 ### Database Schama
 
 #### uers collection
-Here is the MongoDB `users` collection schema formatted as a markdown table:
 
 ```markdown
 | Field      | Type    | Description            |
