@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "main": "sever.js",
   "scripts": {
-    "devBuild": "cls && npx tsc --project tsconfig.dev.json && node dist/dev/server.js",
-    "devStart": "nodemon --verbose --config nodemon.json server.mjs",
-    "prodBuild": "npx tsc --project tsconfig.prod.json",
-    "prodStart": "nodemon --verbose --config nodemon.json --exec \"npm run prodBuild\""
+    "devStart": "nodemon --verbose --config nodemon.json server.mjs"
   },
   "keywords": [],
   "author": "",
